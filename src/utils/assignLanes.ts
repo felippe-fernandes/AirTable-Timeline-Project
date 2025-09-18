@@ -1,7 +1,7 @@
 import { TimelineItem } from '../types/timeline';
 
 export const assignLanes = (items: TimelineItem[]): TimelineItem[] => {
-    const sortedItems = [...items].sort((a, b) => a.start.getTime() - b.start.getTime());
+    const sortedItems = [...items].sort((a, b) => a.start.localeCompare(b.start));
 
     const lanes: TimelineItem[][] = [];
 
