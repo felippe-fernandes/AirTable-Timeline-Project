@@ -1,7 +1,7 @@
 import React from 'react';
+import { useDateMarkers } from '../hooks/useDateMarkers';
 import { TimelineConfig } from '../types/timeline';
 import { formatDate } from '../utils/dateUtils';
-import { useDateMarkers } from '../hooks/useDateMarkers';
 
 interface TimelineAxisProps {
   config: TimelineConfig;

@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
-import { TimelineItem, TimelineConfig } from '../types/timeline';
+import { useEffect, useMemo, useState } from 'react';
+import { TimelineConfig, TimelineItem } from '../types/timeline';
 import { assignLanes } from '../utils/assignLanes';
 import { getDateInString, getDaysBetween } from '../utils/dateUtils';
 

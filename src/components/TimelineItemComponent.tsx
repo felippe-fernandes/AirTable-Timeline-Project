@@ -42,8 +42,8 @@ const TimelineItemComponent: React.FC<TimelineItemComponentProps> = ({
           height: '40px',
           zIndex: dragging ? 100 : undefined
         }}
-  onMouseEnter={handleMouseEnter}
-  onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
       >
         <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-full">

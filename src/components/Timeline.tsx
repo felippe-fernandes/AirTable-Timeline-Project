@@ -1,6 +1,6 @@
 import React from 'react';
-import { TimelineConfig, TimelineItem } from '../types/timeline';
 import { useTimelineState } from '../hooks/useTimelineState';
+import { TimelineItem } from '../types/timeline';
 import TimelineAxis from './TimelineAxis';
 import TimelineLane from './TimelineLane';
 
