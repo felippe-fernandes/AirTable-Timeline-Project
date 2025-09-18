@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TimelineConfig, TimelineItem } from '../types/timeline';
 import { assignLanes } from '../utils/assignLanes';
 import { getDateInString, getDaysBetween } from '../utils/dateUtils';
@@ -14,6 +14,14 @@ const Timeline: React.FC<TimelineProps> = ({
   items,
   pixelsPerDay = 15
 }) => {
+  // Zoom state
+  const [zoom, setZoom] = useState(pixelsPerDay);
+  const minZoom = 5;
+  const maxZoom = 60;
+
+  const handleZoomIn = () => setZoom(z => Math.min(z + 5, maxZoom));
+  const handleZoomOut = () => setZoom(z => Math.max(z - 5, minZoom));
+
   const config: TimelineConfig = useMemo(() => {
     if (items.length === 0) {
       const today = getDateInString();
@@ -21,7 +29,7 @@ const Timeline: React.FC<TimelineProps> = ({
         startDate: today,
         endDate: today,
         totalDays: 0,
-        pixelsPerDay
+        pixelsPerDay: zoom
       };
     }
 
@@ -34,9 +42,9 @@ const Timeline: React.FC<TimelineProps> = ({
       startDate,
       endDate,
       totalDays,
-      pixelsPerDay
+      pixelsPerDay: zoom
     };
-  }, [items, pixelsPerDay]);
+  }, [items, zoom]);
 
   const itemsWithLanes = useMemo(() => assignLanes(items), [items]);
 
@@ -62,10 +70,29 @@ const Timeline: React.FC<TimelineProps> = ({
   return (
     <div className="w-full overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="p-4">
-        <div className="mb-4 text-sm text-gray-600">
+        <div className="mb-4 text-sm text-gray-600 flex items-center gap-4">
           <span className="font-semibold">{config.totalDays}</span> days timeline •
           <span className="font-semibold"> {lanes.length}</span> lanes •
           <span className="font-semibold"> {items.length}</span> items
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              className="px-2 py-1 rounded border bg-gray-100 hover:bg-gray-200"
+              onClick={handleZoomOut}
+              disabled={zoom === minZoom}
+              title="Zoom Out"
+            >
+              -
+            </button>
+            <span className="px-2 text-xs">Zoom: {zoom}</span>
+            <button
+              className="px-2 py-1 rounded border bg-gray-100 hover:bg-gray-200"
+              onClick={handleZoomIn}
+              disabled={zoom === maxZoom}
+              title="Zoom In"
+            >
+              +
+            </button>
+          </div>
         </div>
 
         <div

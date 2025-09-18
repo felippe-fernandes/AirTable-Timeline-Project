@@ -33,7 +33,6 @@ const TimelineItemComponent: React.FC<TimelineItemComponentProps> = ({
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        title={`${item.name} (${formatDate(item.start)} - ${formatDate(item.end)})`}
       >
         <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
           {item.name}
