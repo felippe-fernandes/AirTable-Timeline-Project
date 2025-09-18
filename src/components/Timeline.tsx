@@ -14,7 +14,6 @@ const Timeline: React.FC<TimelineProps> = ({
   items,
   pixelsPerDay = 15
 }) => {
-  // Zoom state
   const [zoom, setZoom] = useState(pixelsPerDay);
   const minZoom = 5;
   const maxZoom = 60;
