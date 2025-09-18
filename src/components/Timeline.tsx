@@ -17,12 +17,25 @@ const Timeline: React.FC<TimelineProps> = ({
   const [zoom, setZoom] = useState(pixelsPerDay);
   const minZoom = 5;
   const maxZoom = 60;
+  const [timelineItems, setTimelineItems] = useState(items);
 
   const handleZoomIn = () => setZoom(z => Math.min(z + 5, maxZoom));
   const handleZoomOut = () => setZoom(z => Math.max(z - 5, minZoom));
 
+  // Listen for item updates
+  React.useEffect(() => {
+    const handler = (e: any) => {
+      const { id, newStart, newEnd } = e.detail;
+      setTimelineItems(prev => prev.map(item =>
+        item.id === id ? { ...item, start: newStart, end: newEnd } : item
+      ));
+    };
+    window.addEventListener('timelineItemUpdate', handler);
+    return () => window.removeEventListener('timelineItemUpdate', handler);
+  }, []);
+
   const config: TimelineConfig = useMemo(() => {
-    if (items.length === 0) {
+    if (timelineItems.length === 0) {
       const today = getDateInString();
       return {
         startDate: today,
@@ -32,7 +45,7 @@ const Timeline: React.FC<TimelineProps> = ({
       };
     }
 
-    const allDates = items.flatMap(item => [item.start, item.end]);
+    const allDates = timelineItems.flatMap(item => [item.start, item.end]);
     const startDate = allDates.reduce((min, d) => d < min ? d : min, allDates[0]);
     const endDate = allDates.reduce((max, d) => d > max ? d : max, allDates[0]);
     const totalDays = getDaysBetween(startDate, endDate);
@@ -43,9 +56,9 @@ const Timeline: React.FC<TimelineProps> = ({
       totalDays,
       pixelsPerDay: zoom
     };
-  }, [items, zoom]);
+  }, [timelineItems, zoom]);
 
-  const itemsWithLanes = useMemo(() => assignLanes(items), [items]);
+  const itemsWithLanes = useMemo(() => assignLanes(timelineItems), [timelineItems]);
 
   const lanes = useMemo(() => {
     const laneMap = new Map<number, TimelineItem[]>();
