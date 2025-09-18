@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTimelineItemUpdate } from '../hooks/useTimelineItemUpdate';
 import { TimelineConfig, TimelineItem } from '../types/timeline';
 import TimelineItemComponent from './TimelineItemComponent';
 
@@ -13,6 +14,8 @@ const TimelineLane: React.FC<TimelineLaneProps> = ({
   items,
   config
 }) => {
+  const handleUpdateDates = useTimelineItemUpdate();
+
   return (
     <div
       className="relative border-b border-gray-200"
@@ -27,6 +30,7 @@ const TimelineLane: React.FC<TimelineLaneProps> = ({
           key={item.id}
           item={item}
           config={config}
+          onUpdateDates={handleUpdateDates}
         />
       ))}
     </div>
