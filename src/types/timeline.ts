@@ -1,8 +1,8 @@
 export interface TimelineItem {
   id: string;
   name: string;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   color?: string;
   lane?: number;
 }
@@ -13,8 +13,8 @@ export interface TimelineLane {
 }
 
 export interface TimelineConfig {
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   totalDays: number;
   pixelsPerDay: number;
 }
