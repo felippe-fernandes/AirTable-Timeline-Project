@@ -25,7 +25,6 @@ const TimelineLane: React.FC<TimelineLaneProps> = ({
       {items.map(item => (
         <TimelineItemComponent
           key={item.id}
-          item={item}
           config={config}
         />
       ))}
