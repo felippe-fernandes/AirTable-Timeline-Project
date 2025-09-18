@@ -28,7 +28,6 @@ const TimelineLane: React.FC<TimelineLaneProps> = ({
           item={item}
           config={config}
           onUpdateDates={(id, newStart, newEnd) => {
-            // Bubble up to parent
             if (typeof window !== 'undefined' && window.dispatchEvent) {
               window.dispatchEvent(new CustomEvent('timelineItemUpdate', {
                 detail: { id, newStart, newEnd }

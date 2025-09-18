@@ -22,7 +22,6 @@ const Timeline: React.FC<TimelineProps> = ({
   const handleZoomIn = () => setZoom(z => Math.min(z + 5, maxZoom));
   const handleZoomOut = () => setZoom(z => Math.max(z - 5, minZoom));
 
-  // Listen for item updates
   React.useEffect(() => {
     const handler = (e: any) => {
       const { id, newStart, newEnd } = e.detail;

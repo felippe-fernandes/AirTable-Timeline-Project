@@ -21,7 +21,6 @@ const TimelineItemComponent: React.FC<TimelineItemComponentProps> = ({
   const left = getDatePosition(item.start, config.startDate, config.pixelsPerDay) + dragOffset;
   const width = getItemWidth(item.start, item.end, config.pixelsPerDay);
 
-  // Mouse events for drag
   const handleMouseDown = (e: React.MouseEvent) => {
     setDragging(true);
     setDragStartX(e.clientX);
@@ -37,10 +36,8 @@ const TimelineItemComponent: React.FC<TimelineItemComponentProps> = ({
     };
     const handleMouseUp = () => {
       if (dragStartX !== null && dragOffset !== 0 && onUpdateDates) {
-        // Calculate days moved
         const daysMoved = Math.round(dragOffset / config.pixelsPerDay);
         if (daysMoved !== 0) {
-          // Update start/end date
           const startDateObj = new Date(item.start);
           const endDateObj = new Date(item.end);
           startDateObj.setDate(startDateObj.getDate() + daysMoved);
