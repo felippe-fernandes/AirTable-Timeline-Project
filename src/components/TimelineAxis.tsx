@@ -1,26 +1,14 @@
 import React from 'react';
 import { TimelineConfig } from '../types/timeline';
-import { addDaysToDate, formatDate } from '../utils/dateUtils';
+import { formatDate } from '../utils/dateUtils';
+import { useDateMarkers } from '../hooks/useDateMarkers';
 
 interface TimelineAxisProps {
   config: TimelineConfig;
 }
 
 const TimelineAxis: React.FC<TimelineAxisProps> = ({ config }) => {
-  const { startDate, totalDays, pixelsPerDay } = config;
-
-  const dateMarkers = [];
-  for (let i = 0; i <= totalDays; i += 7) {
-    const date = addDaysToDate(startDate, i);
-    const position = i * pixelsPerDay;
-
-    dateMarkers.push({
-      date,
-      position,
-      isStart: i === 0,
-      isEnd: i >= totalDays
-    });
-  }
+  const dateMarkers = useDateMarkers(config);
 
   return (
     <div className="absolute top-0 left-0 w-full h-12 border-b border-gray-300 bg-white">

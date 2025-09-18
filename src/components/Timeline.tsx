@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { TimelineConfig, TimelineItem } from '../types/timeline';
-import { assignLanes } from '../utils/assignLanes';
-import { getDateInString, getDaysBetween } from '../utils/dateUtils';
+import { useTimelineState } from '../hooks/useTimelineState';
 import TimelineAxis from './TimelineAxis';
 import TimelineLane from './TimelineLane';
 
@@ -14,69 +13,19 @@ const Timeline: React.FC<TimelineProps> = ({
   items,
   pixelsPerDay = 15
 }) => {
-  const [zoom, setZoom] = useState(pixelsPerDay);
-  const minZoom = 5;
-  const maxZoom = 60;
-  const [timelineItems, setTimelineItems] = useState(items);
-
-  const handleZoomIn = () => setZoom(z => Math.min(z + 5, maxZoom));
-  const handleZoomOut = () => setZoom(z => Math.max(z - 5, minZoom));
-
-  React.useEffect(() => {
-    const handler = (e: any) => {
-      const { id, newStart, newEnd } = e.detail;
-      setTimelineItems(prev => prev.map(item =>
-        item.id === id ? { ...item, start: newStart, end: newEnd } : item
-      ));
-    };
-    window.addEventListener('timelineItemUpdate', handler);
-    return () => window.removeEventListener('timelineItemUpdate', handler);
-  }, []);
-
-  const config: TimelineConfig = useMemo(() => {
-    if (timelineItems.length === 0) {
-      const today = getDateInString();
-      return {
-        startDate: today,
-        endDate: today,
-        totalDays: 0,
-        pixelsPerDay: zoom
-      };
-    }
-
-    const allDates = timelineItems.flatMap(item => [item.start, item.end]);
-    const startDate = allDates.reduce((min, d) => d < min ? d : min, allDates[0]);
-    const endDate = allDates.reduce((max, d) => d > max ? d : max, allDates[0]);
-    const totalDays = getDaysBetween(startDate, endDate);
-
-    return {
-      startDate,
-      endDate,
-      totalDays,
-      pixelsPerDay: zoom
-    };
-  }, [timelineItems, zoom]);
-
-  const itemsWithLanes = useMemo(() => assignLanes(timelineItems), [timelineItems]);
-
-  const lanes = useMemo(() => {
-    const laneMap = new Map<number, TimelineItem[]>();
-
-    itemsWithLanes.forEach(item => {
-      const laneNumber = item.lane || 0;
-      if (!laneMap.has(laneNumber)) {
-        laneMap.set(laneNumber, []);
-      }
-      laneMap.get(laneNumber)!.push(item);
-    });
-
-    return Array.from(laneMap.entries())
-      .sort(([a], [b]) => a - b)
-      .map(([laneNumber, laneItems]) => ({ laneNumber, items: laneItems }));
-  }, [itemsWithLanes]);
-
-  const timelineWidth = config.totalDays * config.pixelsPerDay + 200;
-  const timelineHeight = lanes.length * 60 + 80;
+  const {
+    zoom,
+    minZoom,
+    maxZoom,
+    handleZoomIn,
+    handleZoomOut,
+    timelineItems,
+    setTimelineItems,
+    config,
+    lanes,
+    timelineWidth,
+    timelineHeight
+  } = useTimelineState(items, pixelsPerDay);
 
   return (
     <div className="w-full overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">

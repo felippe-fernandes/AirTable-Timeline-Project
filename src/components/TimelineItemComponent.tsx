@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useHover } from '../hooks/useHover';
+import { useTimelineItemDrag } from '../hooks/useTimelineItemDrag';
 import { TimelineConfig, TimelineItem } from '../types/timeline';
 import { formatDate, getDatePosition, getItemWidth } from '../utils/dateUtils';
 
@@ -13,53 +15,15 @@ const TimelineItemComponent: React.FC<TimelineItemComponentProps> = ({
   config,
   onUpdateDates
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const [dragStartX, setDragStartX] = useState<number | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
+  const { isHovered, handleMouseEnter, handleMouseLeave } = useHover();
+  const {
+    dragging,
+    dragOffset,
+    handleMouseDown
+  } = useTimelineItemDrag({ config, item, onUpdateDates });
 
   const left = getDatePosition(item.start, config.startDate, config.pixelsPerDay) + dragOffset;
   const width = getItemWidth(item.start, item.end, config.pixelsPerDay);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setDragging(true);
-    setDragStartX(e.clientX);
-    e.stopPropagation();
-  };
-
-  React.useEffect(() => {
-    if (!dragging) return;
-    const handleMouseMove = (e: MouseEvent) => {
-      if (dragStartX !== null) {
-        setDragOffset(e.clientX - dragStartX);
-      }
-    };
-    const handleMouseUp = () => {
-      if (dragStartX !== null && dragOffset !== 0 && onUpdateDates) {
-        const daysMoved = Math.round(dragOffset / config.pixelsPerDay);
-        if (daysMoved !== 0) {
-          const startDateObj = new Date(item.start);
-          const endDateObj = new Date(item.end);
-          startDateObj.setDate(startDateObj.getDate() + daysMoved);
-          endDateObj.setDate(endDateObj.getDate() + daysMoved);
-          onUpdateDates(
-            item.id,
-            startDateObj.toISOString().slice(0, 10),
-            endDateObj.toISOString().slice(0, 10)
-          );
-        }
-      }
-      setDragging(false);
-      setDragStartX(null);
-      setDragOffset(0);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [dragging, dragStartX, dragOffset, config.pixelsPerDay, item, onUpdateDates]);
 
   return (
     <>
@@ -78,8 +42,8 @@ const TimelineItemComponent: React.FC<TimelineItemComponentProps> = ({
           height: '40px',
           zIndex: dragging ? 100 : undefined
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+  onMouseEnter={handleMouseEnter}
+  onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
       >
         <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
